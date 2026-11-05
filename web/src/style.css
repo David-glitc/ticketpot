@@ -9,3 +9,4 @@ input{background:#0b0e13;color:var(--fg);border:1px solid #2a3240;border-radius:
 .grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:12px}.big{font-size:26px;font-weight:700}
 
 .launch{display:flex;flex-wrap:wrap;gap:6px 20px;align-items:center;justify-content:space-between;padding:12px 16px;margin:12px 0;border:2px solid var(--acc,#6ea8fe);border-radius:10px;background:var(--card,#171c24);overflow-wrap:anywhere}
+a{color:var(--acc)}
