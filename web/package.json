@@ -1,5 +1,1 @@
-{ "name": "ticketpot-web", "private": true, "type": "module",
-  "scripts": { "dev": "vite --port 5174", "build": "vite build",
-    "build:mainnet": "vite build && cp deployment.mainnet.json dist/deployment.json", "test": "vitest run" },
-  "dependencies": { "ethers": "^6.13.0", "solid-js": "^1.9.0" },
-  "devDependencies": { "vite": "^5.4.0", "vite-plugin-solid": "^2.10.0", "vitest": "^2.1.0" } }
+{"name":"ticketpot-web","private":true,"type":"module","scripts":{"dev":"vite --port 5174","build":"vite build","build:mainnet":"vite build && cp deployment.mainnet.json dist/deployment.json","test":"vitest run"},"dependencies":{"@fontsource/fredoka":"^5.3.0","ethers":"^6.13.0","solid-js":"^1.9.0"},"devDependencies":{"vite":"^5.4.0","vite-plugin-solid":"^2.10.0","vitest":"^2.1.0"}}
