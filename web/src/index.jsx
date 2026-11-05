@@ -16,6 +16,7 @@ const ABI = [
   "event DrawResult(uint256 indexed draw, address indexed winner, uint256 prize, uint256 keeperReward)",
 ];
 const f = (w) => Number(formatEther(w)).toLocaleString(undefined, { maximumFractionDigits: 4 });
+const EXPLORER = "https://scan.botchain.ai";
 const coder = AbiCoder.defaultAbiCoder();
 
 function App() {
@@ -36,7 +37,14 @@ function App() {
   });
   async function connect() {
     try {
-      const bp = new BrowserProvider(window.ethereum); await bp.send("eth_requestAccounts", []);
+      let bp = new BrowserProvider(window.ethereum); await bp.send("eth_requestAccounts", []);
+      if ((await bp.getNetwork()).chainId !== BigInt(cfg().chainId)) {
+        const hex = "0x" + cfg().chainId.toString(16);
+        try { await window.ethereum.request({ method: "wallet_switchEthereumChain", params: [{ chainId: hex }] }); }
+        catch (e) { if (e.code !== 4902 && e?.data?.originalError?.code !== 4902) throw e;
+          await window.ethereum.request({ method: "wallet_addEthereumChain", params: [{ chainId: hex, chainName: "BOT Chain", nativeCurrency: { name: "BOT", symbol: "BOT", decimals: 18 }, rpcUrls: [cfg().rpc], blockExplorerUrls: [EXPLORER] }] }); }
+        bp = new BrowserProvider(window.ethereum);
+      }
       if ((await bp.getNetwork()).chainId !== BigInt(cfg().chainId)) throw new Error("Switch wallet to chain " + cfg().chainId);
       const sg = await bp.getSigner(); rw = new Contract(cfg().address, ABI, sg); setAcct(await sg.getAddress());
     } catch (e) { setErr(e.shortMessage || e.message); }
@@ -59,6 +67,10 @@ function App() {
     <main>
       <header><h1>TicketPot</h1><Show when={!acct()} fallback={<span class="mut">{acct().slice(0, 8)}…</span>}><button onClick={connect}>Connect wallet</button></Show></header>
       <p class="mut">Deposit BOT, keep it. Weekly draw, winner takes the prize pot funded by sponsors. Withdraw your deposit any time.</p>
+      <Show when={cfg() && cfg().launched && cfg().chainId === 677 && /^https:/.test(cfg().rpc)}>
+        <aside class="launch" aria-label="Launch announcement"><b>Officially launched on BOT Chain Mainnet</b>
+          <span class="mut">{cfg().launched} · TicketPot <a href={EXPLORER + "/address/" + cfg().address} target="_blank" rel="noopener noreferrer">{cfg().address}</a> · {cfg().roundLength / 86400}-day rounds</span></aside>
+      </Show>
       <Show when={err()}><p class="err">{err()}</p></Show>
       <Show when={s()} fallback={<p class="mut">{cfg.loading ? "Loading…" : "No deployment.json found."}</p>}>
         <div class="grid">
